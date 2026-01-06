@@ -804,7 +804,7 @@ if (typeof window !== "undefined") {
       'a[href*="framer.com" i]',
       'iframe[src*="framer" i]',
 
-      /* Pencil / Editor UI */
+      /* Framer editor / pencil */
       '[data-framer-editor]',
       '[data-framer-overlay]',
       '[data-framer-toolbar]',
@@ -823,7 +823,10 @@ if (typeof window !== "undefined") {
 
       const r = el.getBoundingClientRect();
       const nearRight = r.right > window.innerWidth - 8;
-      const small = r.width >= 18 && r.width <= 64 && r.height >= 18 && r.height <= 64;
+      const small =
+        r.width >= 18 && r.width <= 64 &&
+        r.height >= 18 && r.height <= 64;
+
       const hasSvg = el.querySelector('svg');
       const noText = (el.textContent || '').trim().length === 0;
 
@@ -836,14 +839,18 @@ if (typeof window !== "undefined") {
   // первый проход
   cleanFramerUI();
 
-  // ловим асинхронную подгрузку Framer
-  const obs = new MutationObserver(cleanFramerUI);
-  obs.observe(document.documentElement, { childList: true, subtree: true });
+  // ловим позднюю подгрузку Framer
+  const observer = new MutationObserver(cleanFramerUI);
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
 
   // подстраховка
   setTimeout(cleanFramerUI, 500);
   setTimeout(cleanFramerUI, 1500);
 })();
 </script>
+
     
 </body></html>
