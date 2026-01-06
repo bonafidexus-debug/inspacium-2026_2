@@ -767,10 +767,7 @@ if (typeof window !== "undefined") {
       message.value = "";
     } catch (err) {
       console.error(err);
-     
-}
-
-      btn.style.fontWeight = "600";
+      btn.textContent = oldText;
       statusEl.textContent = "Error sending. Please try again.";
       statusEl.style.color = "#ffffff";
     } finally {
@@ -796,82 +793,5 @@ if (typeof window !== "undefined") {
   }, 300);
 })();
 </script>
-
-<script>
-(() => {
-  function removeMatches() {
-    // 1) Явные селекторы
-    const selectors = [
-      // бейдж / кредиты
-      '[aria-label*="Made in Framer" i]',
-      '[data-framer-credits]',
-      '[class*="framer-credits" i]',
-      '[id*="framer-credits" i]',
-
-      // editor / pencil / overlay (часто без data-framer-*)
-      '[aria-label*="edit" i]',
-      '[title*="edit" i]',
-      '[class*="framer" i][class*="edit" i]',
-      '[id*="framer" i][id*="edit" i]',
-      '[class*="editor" i]',
-      '[id*="editor" i]',
-      '[data-framer-editor]',
-      '[data-framer-overlay]',
-      '[data-framer-toolbar]',
-
-      // любые ссылки/виджеты Framer
-      'a[href*="framer." i]',
-      'a[href*="framer.com" i]',
-      'a[href*="framerusercontent" i]',
-
-      // iframe, где часто живёт UI
-      'iframe[src*="framer" i]',
-      'iframe[src*="framerusercontent" i]',
-      'iframe[src*="framerstatic" i]'
-    ];
-
-    selectors.forEach(sel => {
-      document.querySelectorAll(sel).forEach(el => el.remove());
-    });
-
-    // 2) Хитрый “карандаш”: маленькая fixed-кнопка справа
-    // (осторожно: правило узкое — чтобы не снести твою кнопку/интерфейс)
-    document.querySelectorAll('button, a, div').forEach(el => {
-      const st = window.getComputedStyle(el);
-      if (st.position !== 'fixed') return;
-
-      const r = el.getBoundingClientRect();
-      const nearRight = r.right > (window.innerWidth - 6);
-      const smallBtn = r.width <= 64 && r.height <= 64 && r.width >= 18 && r.height >= 18;
-      const looksLikeFab = st.borderRadius && parseFloat(st.borderRadius) >= 12;
-
-      // текст обычно пустой, внутри svg
-      const hasSvg = !!el.querySelector('svg');
-      const text = (el.textContent || '').trim();
-
-      if (nearRight && smallBtn && looksLikeFab && hasSvg && text.length === 0) {
-        el.remove();
-      }
-    });
-  }
-
-  // Запуск после загрузки
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", removeMatches);
-  } else {
-    removeMatches();
-  }
-
-  // MutationObserver — ловим, если Framer добавит позже
-  const obs = new MutationObserver(() => removeMatches());
-  obs.observe(document.documentElement, { childList: true, subtree: true });
-
-  // На всякий случай: редкий “поздний” инжект
-  setTimeout(removeMatches, 1000);
-  setTimeout(removeMatches, 3000);
-})();
-</script>
-
-
 
 </body></html>
