@@ -754,9 +754,8 @@ if (typeof window !== "undefined") {
       const data = await r.json().catch(() => ({}));
       if (!r.ok || !data.ok) throw new Error(data.error || "Request failed");
 
-      btn.textContent = "Thank you";
+      btn.textContent = "THANK YOU";
       btn.style.color = "#ffffff";
-      btn.style.fontWeight = "600";
       statusEl.textContent = "Message sent. We’ll be in touch shortly.";
       statusEl.style.color = "#ffffff";
 
