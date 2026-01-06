@@ -797,4 +797,24 @@ if (typeof window !== "undefined") {
 })();
 </script>
 
+    <script>
+(function () {
+  function removeFramerBranding() {
+    const selectors = [
+      'a[href*="framer.com"]',
+      'iframe[src*="framer.com"]',
+      '[data-framer-credits]',
+      '[aria-label="Made in Framer"]'
+    ];
+
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => el.remove());
+    });
+  }
+
+  removeFramerBranding();
+  setInterval(removeFramerBranding, 500);
+})();
+</script>
+
 </body></html>
