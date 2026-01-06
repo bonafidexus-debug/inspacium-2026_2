@@ -794,4 +794,56 @@ if (typeof window !== "undefined") {
 })();
 </script>
 
+<script>
+(() => {
+  function cleanFramerUI() {
+    const selectors = [
+      /* Made in Framer */
+      '[aria-label*="Made in Framer" i]',
+      '[data-framer-credits]',
+      'a[href*="framer.com" i]',
+      'iframe[src*="framer" i]',
+
+      /* Pencil / Editor UI */
+      '[data-framer-editor]',
+      '[data-framer-overlay]',
+      '[data-framer-toolbar]',
+      '[aria-label*="edit" i]',
+      '[title*="edit" i]'
+    ];
+
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => el.remove());
+    });
+
+    /* Fallback: маленькая fixed-кнопка справа с svg (карандаш) */
+    document.querySelectorAll('button, a, div').forEach(el => {
+      const st = getComputedStyle(el);
+      if (st.position !== 'fixed') return;
+
+      const r = el.getBoundingClientRect();
+      const nearRight = r.right > window.innerWidth - 8;
+      const small = r.width >= 18 && r.width <= 64 && r.height >= 18 && r.height <= 64;
+      const hasSvg = el.querySelector('svg');
+      const noText = (el.textContent || '').trim().length === 0;
+
+      if (nearRight && small && hasSvg && noText) {
+        el.remove();
+      }
+    });
+  }
+
+  // первый проход
+  cleanFramerUI();
+
+  // ловим асинхронную подгрузку Framer
+  const obs = new MutationObserver(cleanFramerUI);
+  obs.observe(document.documentElement, { childList: true, subtree: true });
+
+  // подстраховка
+  setTimeout(cleanFramerUI, 500);
+  setTimeout(cleanFramerUI, 1500);
+})();
+</script>
+    
 </body></html>
