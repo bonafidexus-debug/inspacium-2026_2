@@ -685,16 +685,15 @@ if (typeof window !== "undefined") {
 (() => {
   function findSendButton() {
     const btns = Array.from(document.querySelectorAll("button"));
-    return (
-      btns.find(b => (b.textContent || "").trim().toLowerCase() === "send project request") ||
-      btns.find(b => (b.textContent || "").toLowerCase().includes("send project"))
-    );
+    return btns.find(b => (b.textContent || "").trim().toLowerCase() === "send project request")
+        || btns.find(b => (b.textContent || "").toLowerCase().includes("send project"));
   }
 
   function pickFields(root) {
     const inputs = Array.from(root.querySelectorAll("input"));
     const textareas = Array.from(root.querySelectorAll("textarea"));
 
+    // Пытаемся угадать: name = первый text input, email = первый email input, message = textarea
     const email = inputs.find(i => (i.type || "").toLowerCase() === "email") || inputs[1] || null;
     const name = inputs.find(i => (i.type || "").toLowerCase() === "text") || inputs[0] || null;
     const message = textareas[0] || null;
@@ -709,9 +708,7 @@ if (typeof window !== "undefined") {
       el.id = "pr_status";
       el.style.marginTop = "12px";
       el.style.fontSize = "14px";
-      el.style.opacity = "0.85";
-      el.style.color = "#ffffff";      // всегда белый текст
-      el.style.lineHeight = "1.2";
+      el.style.opacity = "0.9";
       btn.parentElement.appendChild(el);
     }
     return el;
@@ -723,6 +720,7 @@ if (typeof window !== "undefined") {
 
     const statusEl = ensureStatusEl(btn);
 
+    // Ищем “блок формы” рядом с кнопкой
     const container =
       btn.closest("form") ||
       btn.closest('[role="form"]') ||
@@ -731,29 +729,14 @@ if (typeof window !== "undefined") {
 
     const { name, email, message } = pickFields(container);
 
-    // Если вдруг поля не найдены — просто выходим (без текста пользователю)
-    if (!name || !email || !message) {
-      console.warn("Fields not found:", { name, email, message, container });
-      return;
-    }
+  //  if (!name || !email || !message) {
+      //statusEl.textContent = "❌ Не смог найти поля формы на странице (name/email/message).";
+    //  console.warn("Fields not found:", { name, email, message, container });
+    //  return;
+  //  }
 
-    // Тримим значения
-    const n = String(name.value || "").trim();
-    const em = String(email.value || "").trim();
-    const msg = String(message.value || "").trim();
-
-    // Если не заполнены — показываем только белый текст (без иконок)
-    if (!n || !em || !msg) {
-      statusEl.textContent = "Please fill in all fields.";
-      return;
-    }
-
-    // Очистим статус перед отправкой
     statusEl.textContent = "";
-
     const oldText = btn.textContent;
-    let success = false;
-
     btn.disabled = true;
     btn.textContent = "Sending...";
 
@@ -761,31 +744,29 @@ if (typeof window !== "undefined") {
       const r = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: n, email: em, message: msg }),
+        body: JSON.stringify({
+          name: String(name.value || "").trim(),
+          email: String(email.value || "").trim(),
+          message: String(message.value || "").trim(),
+        }),
       });
 
       const data = await r.json().catch(() => ({}));
       if (!r.ok || !data.ok) throw new Error(data.error || "Request failed");
 
-      // Успех: только текст на кнопке, без сообщений и галочек снизу
-      success = true;
-      btn.textContent = "Thank you!";
-      statusEl.textContent = "";
+      btn.textContent = "Thank you";
+      statusEl.textContent = "✅ Sent! I’ll get back to you soon.";
 
-      // очистка полей
+      // очистка
       name.value = "";
       email.value = "";
       message.value = "";
     } catch (err) {
       console.error(err);
-
-      // Ошибка отправки: только белый текст, без ❌
       btn.textContent = oldText;
-      statusEl.textContent = "Error sending. Please try again.";
+      statusEl.textContent = "❌ Error sending. Please try again.";
     } finally {
-      // После успеха — оставляем кнопку disabled
-      // После ошибки — включаем обратно
-      btn.disabled = success;
+      btn.disabled = false;
     }
   }
 
@@ -793,12 +774,13 @@ if (typeof window !== "undefined") {
     const btn = findSendButton();
     if (!btn) return false;
 
-    // capture=true чтобы перебить “фреймерный success state”
+    // Важно: перехватываем в capture, чтобы перебить “фреймерный success state”
     btn.addEventListener("click", (e) => onClickSend(btn, e), true);
     console.log("[InSpacium] Send Project Request bound to /api/contact");
     return true;
   }
 
+  // ждём, пока Framer/React отрисует кнопку
   const start = Date.now();
   const timer = setInterval(() => {
     if (init()) return clearInterval(timer);
@@ -806,6 +788,5 @@ if (typeof window !== "undefined") {
   }, 300);
 })();
 </script>
-
 
 </body></html>
