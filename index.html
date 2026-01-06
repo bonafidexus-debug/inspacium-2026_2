@@ -729,11 +729,11 @@ if (typeof window !== "undefined") {
 
     const { name, email, message } = pickFields(container);
 
-  //  if (!name || !email || !message) {
-      //statusEl.textContent = "❌ Не смог найти поля формы на странице (name/email/message).";
-    //  console.warn("Fields not found:", { name, email, message, container });
-    //  return;
-  //  }
+    if (!name || !email || !message) {
+      statusEl.textContent = "❌ Не смог найти поля формы на странице (name/email/message).";
+      console.warn("Fields not found:", { name, email, message, container });
+      return;
+    }
 
     statusEl.textContent = "";
     const oldText = btn.textContent;
@@ -756,9 +756,10 @@ if (typeof window !== "undefined") {
 
       btn.textContent = "THANK YOU";
       btn.style.color = "#ffffff";
+      btn.style.fontWeight = "600";
       statusEl.textContent = "Message sent. We’ll be in touch shortly.";
       statusEl.style.color = "#ffffff";
-
+      
 
       // очистка
       name.value = "";
