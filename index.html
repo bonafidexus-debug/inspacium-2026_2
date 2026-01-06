@@ -768,7 +768,8 @@ if (typeof window !== "undefined") {
     } catch (err) {
       console.error(err);
       btn.textContent = oldText;
-      statusEl.textContent = "❌ Error sending. Please try again.";
+      statusEl.textContent = "Error sending. Please try again.";
+      statusEl.style.color = "#ffffff";
     } finally {
       btn.disabled = false;
     }
