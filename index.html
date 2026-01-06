@@ -755,6 +755,8 @@ if (typeof window !== "undefined") {
       if (!r.ok || !data.ok) throw new Error(data.error || "Request failed");
 
       btn.textContent = "Thank you";
+      btn.style.color = "#ffffff";
+      btn.style.fontWeight = "600";
       statusEl.textContent = "Message sent. We’ll be in touch shortly.";
       statusEl.style.color = "#ffffff";
 
