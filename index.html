@@ -768,6 +768,8 @@ if (typeof window !== "undefined") {
     } catch (err) {
       console.error(err);
       btn.textContent = oldText;
+      btn.style.color = "#ffffff";
+      btn.style.fontWeight = "600";
       statusEl.textContent = "Error sending. Please try again.";
       statusEl.style.color = "#ffffff";
     } finally {
