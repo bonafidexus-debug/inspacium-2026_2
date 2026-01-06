@@ -797,14 +797,17 @@ if (typeof window !== "undefined") {
 })();
 </script>
 
-    <script>
+ <script>
 (function () {
-  function removeFramerBranding() {
+  function cleanFramerUI() {
     const selectors = [
       'a[href*="framer.com"]',
       'iframe[src*="framer.com"]',
       '[data-framer-credits]',
-      '[aria-label="Made in Framer"]'
+      '[aria-label="Made in Framer"]',
+      '[data-framer-editor]',
+      '[data-framer-overlay]',
+      '[data-framer-toolbar]'
     ];
 
     selectors.forEach(sel => {
@@ -812,9 +815,10 @@ if (typeof window !== "undefined") {
     });
   }
 
-  removeFramerBranding();
-  setInterval(removeFramerBranding, 500);
+  cleanFramerUI();
+  setInterval(cleanFramerUI, 500);
 })();
 </script>
+
 
 </body></html>
